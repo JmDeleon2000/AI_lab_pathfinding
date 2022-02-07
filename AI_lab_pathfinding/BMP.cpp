@@ -3,7 +3,9 @@
 #include <iostream>
 
 
+// implements task 1.1
 
+// represents a pixel as stored by the .bmp format
 struct BGR_pixel
 {
 	unsigned char b;

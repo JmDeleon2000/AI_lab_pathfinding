@@ -1,6 +1,6 @@
 #pragma once
 
-//defines the interface for managing BMP images
+//defines the interface for managing BMP images (task 1.1)
 
 // defines the pixel size as 3 bytes per pixel
 #define pixel_size  3 
