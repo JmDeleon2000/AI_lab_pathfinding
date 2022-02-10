@@ -26,7 +26,8 @@ struct Discrete_image
 #define DISCRETE_BMP_PATH	80
 // The value is red, representing the start of the path. 83 for S in ASCII.
 #define DISCRETE_BMP_START	83
-
+// The value is purple, representing a step of the suggested path. 65 for A in ASCII.
+#define DISCRETE_BMP_AWNSER	65
 
 
 //class that opens and holds bmp image information

@@ -141,18 +141,73 @@ BMP_image::BMP_image(Discrete_image* discrete_image)
 	}
 }
 
+#define average 0
+#if average
+char average_pixels(BMP_image* image, 
+	int init_pixel_x, int init_pixel_y, 
+	int end_pixel_x, int end_pixel_y) 
+{
+	// TODO better name
+	//const int pixel_range = (end_pixel_x - init_pixel_x) * (end_pixel_y - init_pixel_y);
+
+	int p = -500;
+	int w = -500;
+	int g = 0;
+	int s = 0;
+
+	int i, j = init_pixel_y;
+	while (j < end_pixel_y)
+	{
+		i = init_pixel_x;
+		while (i < end_pixel_x)
+		{
+			if (image->image[j][i].b <= 150 &&
+				image->image[j][i].g <= 150 &&
+				image->image[j][i].r <= 150)
+				w += 1;
+			if (image->image[j][i].b < 150 &&
+				image->image[j][i].g < 150 &&
+				image->image[j][i].r > 150)
+				s += 1;
+			if (image->image[j][i].b < 150 &&
+				image->image[j][i].g > 150 &&
+				image->image[j][i].r < 150)
+				g += 1;
+			if (image->image[j][i].b >= 150 &&
+				image->image[j][i].g >= 150 &&
+				image->image[j][i].r >= 150)
+				p += 1;
+			i++;
+		}
+		j++;
+	}
+
+	if (p > w && p > g && p > s)
+		return DISCRETE_BMP_PATH;
+	if (w > p && w > g && w > s)
+		return DISCRETE_BMP_WALL;
+	if (s > w && s > g && s > p)
+		return DISCRETE_BMP_START;
+	if (g > w && g > s && g > p)
+		return DISCRETE_BMP_GOAL;
+
+	return DISCRETE_BMP_WALL;
+}
+#endif
+
 // discretize the image for faster agent processing. Certain loss of data.
 Discrete_image BMP_image::discretize(BMP_image* image_data)
 {
 	Discrete_image output;
-	output.discrete_pixel_size = image_data->width / 32;
+	output.discrete_pixel_size = image_data->width / 64;
 	output.width = image_data->width / output.discrete_pixel_size;
 	output.height = image_data->height / output.discrete_pixel_size;
-	int pixel_sampler_x;
-	int pixel_sampler_y = output.discrete_pixel_size / 2;
 
-
+#if average
+	char sampled_pixel;
+#else
 	BGR_pixel sampled_pixel;
+#endif
 	output.data = new char* [output.height];
 
 	int i, j = 0;
@@ -163,6 +218,14 @@ Discrete_image BMP_image::discretize(BMP_image* image_data)
 
 		while (i < output.width)
 		{
+#if average
+				sampled_pixel = average_pixels(image_data,
+				i * output.discrete_pixel_size,
+				j * output.discrete_pixel_size,
+				(i + 1) * output.discrete_pixel_size,
+				(j + 1) * output.discrete_pixel_size);
+				output.data[j][i] = sampled_pixel;
+#else
 			sampled_pixel = image_data->image[
 				j * output.discrete_pixel_size][
 					i * output.discrete_pixel_size];
@@ -186,6 +249,7 @@ Discrete_image BMP_image::discretize(BMP_image* image_data)
 					sampled_pixel.g < 150 &&
 					sampled_pixel.r >= 150) // test for a red pixel
 					output.data[j][i] = DISCRETE_BMP_START;
+#endif
 			i++;
 		}
 		j++;
