@@ -132,7 +132,30 @@ BMP_image::BMP_image(Discrete_image* discrete_image)
 				image[j][i].g = 255;
 				image[j][i].r = 255;
 				break;
+			case VISITED_UP:
+				image[j][i].b = 255;
+				image[j][i].g = 255;
+				image[j][i].r = 255;
+				break;
+			case VISITED_DOWN:
+				image[j][i].b = 255;
+				image[j][i].g = 255;
+				image[j][i].r = 255;
+				break;
+			case VISITED_LEFT:
+				image[j][i].b = 255;
+				image[j][i].g = 255;
+				image[j][i].r = 255;
+				break;
+			case VISITED_RIGHT:
+				image[j][i].b = 255;
+				image[j][i].g = 255;
+				image[j][i].r = 255;
+				break;
 			default:
+				image[j][i].b = 255;
+				image[j][i].g = 0;
+				image[j][i].r = 255;
 				break;
 			}
 			i++;
