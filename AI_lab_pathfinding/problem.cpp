@@ -19,7 +19,7 @@ action problem_definition::actions()
 		// When the node is represents a labyrinth wall.
 		// Or when the considered action was the last action taken
 		// Tested respectively:
-		if (evaluated_node < 0b1111 
+		if (evaluated_node == DISCRETE_BMP_PATH 
 			&& evaluated_node != DISCRETE_BMP_WALL
 			&& up != last_action)
 			return up;
@@ -32,7 +32,7 @@ action problem_definition::actions()
 		test_state = down(current);
 		evaluated_node = ambient.data[test_state.y][test_state.x];
 
-		if (evaluated_node < 0b1111
+		if (evaluated_node == DISCRETE_BMP_PATH
 			&& evaluated_node != DISCRETE_BMP_WALL
 			&& down != last_action)
 			return down;
@@ -43,7 +43,7 @@ action problem_definition::actions()
 		test_state = right(current);
 		evaluated_node = ambient.data[test_state.y][test_state.x];
 
-		if (evaluated_node < 0b1111
+		if (evaluated_node == DISCRETE_BMP_PATH
 			&& evaluated_node != DISCRETE_BMP_WALL
 			&& right != last_action)
 			return right;
@@ -54,7 +54,7 @@ action problem_definition::actions()
 		test_state = left(current);
 		evaluated_node = ambient.data[test_state.y][test_state.x];
 
-		if (evaluated_node < 0b1111
+		if (evaluated_node == DISCRETE_BMP_PATH
 			&& evaluated_node != DISCRETE_BMP_WALL
 			&& left != last_action)
 			return left;
