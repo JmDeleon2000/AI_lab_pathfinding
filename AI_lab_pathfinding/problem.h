@@ -2,6 +2,7 @@
 #include "BMP.h"
 #include <queue>
 #include <stack>
+#include <vector>
 #include <unordered_map>
 
 
@@ -94,20 +95,18 @@ public:
 class A_Star_v1_Agent : public  problem_definition
 {
 public:
-	std::queue<node_visit> path;
+	std::vector<node_visit> path;
 
 public:
-	action actions();
 	A_Star_v1_Agent(Discrete_image Ambient);
 };
 
 class A_Star_v2_Agent : public  problem_definition
 {
 public:
-	std::queue<node_visit> path;
+	std::vector<node_visit> path;
 
 public:
-	action actions();
 	A_Star_v2_Agent(Discrete_image Ambient);
 };
 

@@ -9,7 +9,7 @@ int main()
 
 	BMP_image* x = new BMP_image("testb.bmp");
 	Discrete_image y = BMP_image::discretize(x);
-	BFS_Agent* agente = new BFS_Agent(y);
+	problem_definition* agente = new A_Star_v1_Agent(y);
 	x = new(x) BMP_image(&agente->ambient);
 	//x = new(x) BMP_image(&y);
 	BMP_image::output_BMP(x, "test_discretizationb.bmp");

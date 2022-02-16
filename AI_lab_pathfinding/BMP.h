@@ -30,6 +30,7 @@ struct Discrete_image
 // The value is purple, representing a step of the suggested path. 65 for A in ASCII.
 #define DISCRETE_BMP_AWNSER	0x30
 
+// Masks used to mark and test nodes as visited or explored
 #define VISITED_RIGHT	0b0001
 #define VISITED_LEFT	0b0010
 #define VISITED_DOWN	0b0100

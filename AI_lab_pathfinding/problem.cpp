@@ -50,6 +50,7 @@ action problem_definition::actions()
 	return nullptr;
 }
 
+
 state problem_definition::results(state current, action a) 
 {
 	return a(current);
@@ -97,6 +98,7 @@ bool operator != (state const &a, state const& b)
 {
 	return (a.x != b.x || a.y != b.y);
 }
+
 
 bool operator < (state const& a, state const& b)
 {
