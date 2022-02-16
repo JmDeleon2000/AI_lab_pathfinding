@@ -2,17 +2,24 @@
 #include "BMP.h"
 #include <queue>
 #include <stack>
-#include <map>
+#include <unordered_map>
 
 
 struct state
 {
 	uint8_t x;
 	uint8_t y;
+	bool operator == (state const& a) const;
 };
 
 bool operator != (state const& a, state const& b);
 bool operator < (state const& a, state const& b);
+
+class StateHash 
+{
+public:
+	size_t operator()(const state& a)const;
+};
 
 // defines actions a functions that recieve a state and return another state
 typedef state (*action)(state);
@@ -23,34 +30,6 @@ state down(state s);
 state right(state s);
 state left(state s);
 
-
-// void valid_actions;
-// valid_actions = actions();
-// int i = 0;
-// bool was_valid = false;
-// while (i < 4) 
-//{		
-//		switch(valid_actions.mask[i])
-//		{
-//			case UP_VALID (o cualquiera):
-//			was_valid = true;
-//			matriz[current.y][current.x] = matriz[current.y][current.x] | VISITED_UP;
-//			// depende de qué algoritmo es pero:
-//			// lo escribe en la estructura path
-//			current = up(current);
-//			i = 4;
-//			break;
-//		}
-//		i++;
-//}
-//if (was_valid)
-//{
-//		continuar con el siguiente nodo;
-//}
-//else 
-//{
-//		backtracking;
-//}
 
 // used to trace back the resultant path
 struct node_visit
@@ -68,7 +47,7 @@ public:
 	state current;
 	Discrete_image ambient;
 	action last_action;
-	std::map<state, node_visit> map;
+	std::unordered_map<state, node_visit, StateHash> map;
 
 public:
 

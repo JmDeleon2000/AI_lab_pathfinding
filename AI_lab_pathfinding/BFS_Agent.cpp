@@ -45,7 +45,7 @@ BFS_Agent :: BFS_Agent(Discrete_image Ambient)
 		path.pop();
 		current = current_visit.curr;
 		prev_cost = current_visit.total_cost;
-		std::cout << (int)current.x << " " << (int)current.y << "\n";
+		//std::cout << (int)current.x << " " << (int)current.y << "\n";
 
 		if (goalTest(current))
 			break;
@@ -60,17 +60,20 @@ BFS_Agent :: BFS_Agent(Discrete_image Ambient)
 		}
 		map.insert(std::make_pair(current, current_visit));
 	}
-	std::cout << "\n\n\n\n";
-	std::cout << (int)current.x << " " << (int)current.y << "\n";
+	//std::cout << "\n\n";
+	//std::cout << (int)current.x << " " << (int)current.y << "\n";
+	//std::cout << (int)current_visit.last.x << " " << (int)current_visit.last.y << "\n";
+	//std::cout << "\n\n";
 
 
 	// retrieve and mark the path from the map
 	auto search = map.find(current_visit.last);
-	while (search->second.curr != search->second.last)
+	while (search->second.curr != search->second.last && search != map.end())
 	{
-		std::cout << (int)search->first.x << " " << (int)search->first.y << " ";
-		std::cout << (int)search->second.last.x << " " << (int)search->second.last.y << " ";
-		std::cout << (int)search->second.curr.x << " " << (int)search->second.curr.y << "\n";
+		//std::cout << (int)search->first.x << " " << (int)search->first.y << " ";
+		//std::cout << (int)search->second.last.x << " " << (int)search->second.last.y << " ";
+		//std::cout << (int)search->second.curr.x << " " << (int)search->second.curr.y << "\n";
+		//std::cout << search->second.total_cost << "\n";
 		ambient.data[search->second.curr.y][search->second.curr.x] = DISCRETE_BMP_AWNSER;
 		search = map.find(search->second.last);
 	}

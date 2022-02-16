@@ -8,7 +8,7 @@ action problem_definition::actions()
 	state test_state;
 
 	action action_list[4] = { up, down, right, left };
-	action inv_action_list[4] = { down, up, left, right };
+	//action inv_action_list[4] = { down, up, left, right };
 	uint8_t mask_list[4] = { VISITED_UP, VISITED_DOWN, VISITED_RIGHT, VISITED_LEFT };
 
 	int i = 0;
@@ -37,8 +37,7 @@ action problem_definition::actions()
 			if ((evaluated_node == DISCRETE_BMP_PATH
 				|| evaluated_node == DISCRETE_BMP_GOAL
 				|| evaluated_node == DISCRETE_BMP_START)
-				&& evaluated_node != DISCRETE_BMP_WALL
-				&& inv_action_list[i] != last_action)
+				&& evaluated_node != DISCRETE_BMP_WALL)
 			{
 				ambient.data[current.y][current.x] = ambient.data[current.y][current.x] | mask_list[i];
 				return action_list[i];
@@ -53,7 +52,6 @@ action problem_definition::actions()
 
 state problem_definition::results(state current, action a) 
 {
-	last_action = a;
 	return a(current);
 }
 
@@ -102,6 +100,17 @@ bool operator != (state const &a, state const& b)
 
 bool operator < (state const& a, state const& b)
 {
-	// TODO
 	return ((int)a.x + (int)a.y < (int)b.x + (int)b.y);
+}
+
+// Manages hash map collision
+bool state::operator == (state const& a) const
+{
+	return (a.x == x && a.y == y);
+}
+
+// defines state hashing behaviour
+size_t StateHash::operator()(const state &a) const
+{
+	return ((int)a.x * (int)a.x) + DISCRETE_BOUND - a.y;
 }
