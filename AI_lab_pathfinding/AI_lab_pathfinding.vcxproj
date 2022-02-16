@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BFS_Agent.cpp" />
     <ClCompile Include="BMP.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="problem.cpp" />

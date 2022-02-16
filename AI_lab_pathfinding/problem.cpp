@@ -7,57 +7,44 @@ action problem_definition::actions()
 	uint8_t evaluated_node;
 	state test_state;
 
-	// The node directly above the current node hasn't been evaluated
-	if ((node & VISITED_UP) == DISCRETE_BMP_PATH) 
+	action action_list[4] = { up, down, right, left };
+	action inv_action_list[4] = { down, up, left, right };
+	uint8_t mask_list[4] = { VISITED_UP, VISITED_DOWN, VISITED_RIGHT, VISITED_LEFT };
+
+	int i = 0;
+	while (i < 4)
 	{
-		// Get possible next node
-		test_state = up(current);
-		evaluated_node = ambient.data[test_state.y][test_state.x];
+		// The node directly above the current node hasn't been evaluated
+		if ((node & mask_list[i]) == DISCRETE_BMP_PATH)
+		{
+			// Get possible next node
+			test_state = action_list[i](current);
+			if (test_state.x >= DISCRETE_BOUND
+				|| test_state.y >= DISCRETE_BOUND
+				|| test_state.x < 0
+				|| test_state.y < 0)
+			{
+				i++;
+				continue;
+			}
+			evaluated_node = ambient.data[test_state.y][test_state.x];
 
-		// Evaluate if the move to the considered node is valid.
-		// Where invalid cases are when the node has been visited and exhausted.
-		// When the node is represents a labyrinth wall.
-		// Or when the considered action was the last action taken
-		// Tested respectively:
-		if (evaluated_node == DISCRETE_BMP_PATH 
-			&& evaluated_node != DISCRETE_BMP_WALL
-			&& up != last_action)
-			return up;
-	}
-
-	// All other if statements follow the same logic
-	// but test for all the other 3 different actions and return their respective action
-	if ((node & VISITED_DOWN) == DISCRETE_BMP_PATH)
-	{
-		test_state = down(current);
-		evaluated_node = ambient.data[test_state.y][test_state.x];
-
-		if (evaluated_node == DISCRETE_BMP_PATH
-			&& evaluated_node != DISCRETE_BMP_WALL
-			&& down != last_action)
-			return down;
-	}
-
-	if ((node & VISITED_RIGHT) == DISCRETE_BMP_PATH)
-	{
-		test_state = right(current);
-		evaluated_node = ambient.data[test_state.y][test_state.x];
-
-		if (evaluated_node == DISCRETE_BMP_PATH
-			&& evaluated_node != DISCRETE_BMP_WALL
-			&& right != last_action)
-			return right;
-	}
-
-	if ((node & VISITED_LEFT) == DISCRETE_BMP_PATH)
-	{
-		test_state = left(current);
-		evaluated_node = ambient.data[test_state.y][test_state.x];
-
-		if (evaluated_node == DISCRETE_BMP_PATH
-			&& evaluated_node != DISCRETE_BMP_WALL
-			&& left != last_action)
-			return left;
+			// Evaluate if the move to the considered node is valid.
+			// Where invalid cases are when the node has been visited and exhausted.
+			// When the node is represents a labyrinth wall.
+			// Or when the considered action was the last action taken
+			// Tested respectively:
+			if ((evaluated_node == DISCRETE_BMP_PATH
+				|| evaluated_node == DISCRETE_BMP_GOAL
+				|| evaluated_node == DISCRETE_BMP_START)
+				&& evaluated_node != DISCRETE_BMP_WALL
+				&& inv_action_list[i] != last_action)
+			{
+				ambient.data[current.y][current.x] = ambient.data[current.y][current.x] | mask_list[i];
+				return action_list[i];
+			}
+		}
+		i++;
 	}
 
 	// if no valid action is found, nullptr is returned
@@ -66,6 +53,7 @@ action problem_definition::actions()
 
 state problem_definition::results(state current, action a) 
 {
+	last_action = a;
 	return a(current);
 }
 
@@ -105,4 +93,15 @@ state left(state current)
 	state out = current;
 	out.x -= 1;
 	return out;
+}
+
+bool operator != (state const &a, state const& b)
+{
+	return (a.x != b.x || a.y != b.y);
+}
+
+bool operator < (state const& a, state const& b)
+{
+	// TODO
+	return ((int)a.x + (int)a.y < (int)b.x + (int)b.y);
 }

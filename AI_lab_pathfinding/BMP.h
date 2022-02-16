@@ -20,22 +20,22 @@ struct Discrete_image
 
 // MACROS that define the accepted values a discrete bmp data value may take
 // The value is green, representing a goal. 71 for G in ASCII.
-#define DISCRETE_BMP_GOAL	71
+#define DISCRETE_BMP_GOAL	0x40
 // The value is black, representing a wall. 87 for W in ASCII.
-#define DISCRETE_BMP_WALL	87
+#define DISCRETE_BMP_WALL	0x10
 // The value is white, representing a walkable path. 80 for P in ASCII.
 #define DISCRETE_BMP_PATH	0b0000
 // The value is red, representing the start of the path. 83 for S in ASCII.
-#define DISCRETE_BMP_START	83
+#define DISCRETE_BMP_START	0x20
 // The value is purple, representing a step of the suggested path. 65 for A in ASCII.
-#define DISCRETE_BMP_AWNSER	65
+#define DISCRETE_BMP_AWNSER	0x30
 
 #define VISITED_RIGHT	0b0001
 #define VISITED_LEFT	0b0010
 #define VISITED_DOWN	0b0100
 #define VISITED_UP		0b1000
 
-
+#define DISCRETE_BOUND 64
 
 
 //class that opens and holds bmp image information

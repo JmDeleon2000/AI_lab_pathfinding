@@ -108,7 +108,7 @@ BMP_image::BMP_image(Discrete_image* discrete_image)
 		{
 			discrete_pixel = discrete_image->data[
 				j / discrete_image->discrete_pixel_size][
-					i / discrete_image->discrete_pixel_size];
+					i / discrete_image->discrete_pixel_size] & 0xf0;
 
 			switch (discrete_pixel)
 			{
@@ -202,7 +202,7 @@ char average_pixels(BMP_image* image,
 Discrete_image BMP_image::discretize(BMP_image* image_data)
 {
 	Discrete_image output;
-	output.discrete_pixel_size = image_data->width / 64;
+	output.discrete_pixel_size = image_data->width / DISCRETE_BOUND;
 	output.width = image_data->width / output.discrete_pixel_size;
 	output.height = image_data->height / output.discrete_pixel_size;
 

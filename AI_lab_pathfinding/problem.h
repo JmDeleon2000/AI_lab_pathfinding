@@ -2,7 +2,7 @@
 #include "BMP.h"
 #include <queue>
 #include <stack>
-#include <vector>
+#include <map>
 
 
 struct state
@@ -10,6 +10,9 @@ struct state
 	uint8_t x;
 	uint8_t y;
 };
+
+bool operator != (state const& a, state const& b);
+bool operator < (state const& a, state const& b);
 
 // defines actions a functions that recieve a state and return another state
 typedef state (*action)(state);
@@ -52,10 +55,8 @@ state left(state s);
 // used to trace back the resultant path
 struct node_visit
 {
-	uint8_t x;
-	uint8_t y;
-	uint8_t x_previous;
-	uint8_t y_previous;
+	state curr;
+	state last;
 	int total_cost; //siempre se le suma 1 porque todos los nodos son iguales
 };
 
@@ -67,10 +68,9 @@ public:
 	state current;
 	Discrete_image ambient;
 	action last_action;
+	std::map<state, node_visit> map;
 
 public:
-	// scores posible actions based on avalible heuristics (if any)
-	virtual float action_score(action a) = 0;
 
 	// returns the next action to execute based on step costs and heuristics (if any)
 	// returns null if there are no valid actions for the current node
@@ -86,7 +86,7 @@ public:
 	float stepCost(state current, action a , state next);
 
 	// returns a real number that determines the best possible solution
-	virtual float pathCost() = 0;
+	//virtual float pathCost() = 0;
 };
 
 	
@@ -119,7 +119,6 @@ public:
 
 public:
 	action actions();
-	float action_score(action a);
 	A_Star_v1_Agent(Discrete_image Ambient);
 };
 
@@ -130,7 +129,6 @@ public:
 
 public:
 	action actions();
-	float action_score(action a);
 	A_Star_v2_Agent(Discrete_image Ambient);
 };
 
