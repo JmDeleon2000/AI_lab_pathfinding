@@ -84,7 +84,6 @@ class DFS_Agent : public  problem_definition
 {
 public:
 	std::stack<node_visit> path;
-	Discrete_image ambient;
 
 public:
 	DFS_Agent(Discrete_image Ambient);
@@ -109,7 +108,6 @@ public:
 public:
 	A_Star_v2_Agent(Discrete_image Ambient);
 };
-
 
 
 

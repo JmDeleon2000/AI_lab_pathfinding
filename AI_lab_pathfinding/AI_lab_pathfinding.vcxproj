@@ -140,8 +140,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="A_Star_v1_Agent.cpp" />
+    <ClCompile Include="A_Star_v2_Angent.cpp" />
     <ClCompile Include="BFS_Agent.cpp" />
     <ClCompile Include="BMP.cpp" />
+    <ClCompile Include="DFS_Agent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="problem.cpp" />
   </ItemGroup>

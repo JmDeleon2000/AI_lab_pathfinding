@@ -1,42 +1,76 @@
 #include "problem.h"
-#define BFS_debug 0
-
+#include "math.h"
+#define A_star_v1_debug 0
 #include <iostream>
 
+state Interest_points[2];
 
-state goal[2];
+// used to represent 2d vector
+float SGA[2], SGB[2];
+
+// normalizes input vector
+void normalize(float a[2]) 
+{
+	float mag;
+	mag = sqrtf(a[0] * a[0] + a[1] * a[1]);
+	 a[0] /= mag;
+	 a[1] /= mag;
+}
+
+float dot_prod(float a[2], float b[2]) 
+{
+	return a[0] * b[0] + a[1] * b[1];
+}
 
 //  allows polymorphic behaviour for the two functions defined bellow
 typedef bool (*visit_comparator)(const node_visit& a, const node_visit& b);
 
 // function used by std::sort to compare visits when one goal has been found
+// computes and compares the angle between the director vectors that describe the node visits and the desired path
 bool One_goal_test(const node_visit& a, const node_visit& b)
 {
-	float sqrd_a, sqrd_b;
-	sqrd_a = (a.curr.x - goal[0].x) * (a.curr.x - goal[0].x) 
-		+ (a.curr.y - goal[0].y) * (a.curr.y - goal[0].y);
-	sqrd_b = (b.curr.x - goal[0].x) * (b.curr.x - goal[0].x)
-		+ (b.curr.y - goal[0].y) * (b.curr.y - goal[0].y);
-	return sqrd_a < sqrd_b;
+	float SNA[2], SNB[2];
+	float alpha, theta;
+	SNA[0] = a.curr.x - a.last.x;
+	SNA[1] = a.curr.y - a.last.y;
+	normalize(SNA);
+	alpha = std::abs(dot_prod(SNA, SGA));
+
+	SNB[0] = b.curr.x - b.last.x;
+	SNB[1] = b.curr.y - b.last.y;
+	normalize(SNB);
+	theta = std::abs(dot_prod(SNB, SGA));
+
+	return alpha < theta;
 }
 
 // function used by std::sort to compare visits when two goals have been found
+// computes and compares the angle between the director vectors that describe the node visits and the desired path
 bool Two_goal_test(const node_visit& a, const node_visit& b)
 {
-	float sqrd_a, sqrd_b;
-	sqrd_a = (a.curr.x - goal[0].x) * (a.curr.x - goal[0].x)
-		+ (a.curr.y - goal[0].y) * (a.curr.y - goal[0].y);
-	sqrd_b = (b.curr.x - goal[0].x) * (b.curr.x - goal[0].x)
-		+ (b.curr.y - goal[0].y) * (b.curr.y - goal[0].y);
-	return sqrd_a < sqrd_b;
+	float SNA[2], SNB[2];
+	float alpha, beta, theta, gamma;
+	SNA[0] = a.curr.x - a.last.x;
+	SNA[1] = a.curr.y - a.last.y;
+	normalize(SNA);
+	alpha = std::abs(dot_prod(SNA, SGA));
+	beta = std::abs(dot_prod(SNA, SGB));
+
+	SNB[0] = b.curr.x - b.last.x;
+	SNB[1] = b.curr.y - b.last.y;
+	normalize(SNB);
+	theta = std::abs(dot_prod(SNB, SGA));
+	gamma = std::abs(dot_prod(SNB, SGB));
+
+	return (alpha < theta && alpha < gamma) || (beta < theta && beta < gamma);
 }
 
-
+// vector angle A*
 A_Star_v1_Agent::A_Star_v1_Agent(Discrete_image Ambient)
 {
 	ambient = Ambient;
 	bool found_interest_points[3] = { false, false, false};
-	//								  START, GOAL 
+	//								  START, goal 
 
 	//search for the start and the goals
 	int i, j = 0;
@@ -62,11 +96,11 @@ A_Star_v1_Agent::A_Star_v1_Agent(Discrete_image Ambient)
 			if (ambient.data[j][i] == DISCRETE_BMP_GOAL)
 			{
 				if (found_interest_points[1] 
-					&& (goal[0].x - i) * (goal[0].x - i) > 5
-					&& (goal[0].y - j) * (goal[0].y - j) > 5)
+					&& (Interest_points[0].x - i) * (Interest_points[0].x - i) > 5
+					&& (Interest_points[0].y - j) * (Interest_points[0].y - j) > 5)
 				{
-					goal[1].y = j;
-					goal[1].x = i;
+					Interest_points[1].y = j;
+					Interest_points[1].x = i;
 					found_interest_points[2] = true;
 					if (found_interest_points[0]) 
 					{
@@ -76,8 +110,8 @@ A_Star_v1_Agent::A_Star_v1_Agent(Discrete_image Ambient)
 				}
 				else
 				{
-					goal[0].y = j;
-					goal[0].x = i;
+					Interest_points[0].y = j;
+					Interest_points[0].x = i;
 					found_interest_points[1] = true;
 				}
 			}
@@ -85,6 +119,17 @@ A_Star_v1_Agent::A_Star_v1_Agent(Discrete_image Ambient)
 		}
 		j++;
 	}
+
+	SGA[0] = Interest_points[0].x - current.x;
+	SGA[1] = Interest_points[0].y - current.y;
+	normalize(SGA);
+	if (found_interest_points[2]) 
+	{
+		SGB[0] = Interest_points[1].x - current.x;
+		SGB[1] = Interest_points[1].y - current.y;
+		normalize(SGB);
+	}
+
 
 	// selects comparasion function depending the amount of goals identified
 	visit_comparator My_test = found_interest_points[2] ? Two_goal_test : One_goal_test;
@@ -109,7 +154,7 @@ A_Star_v1_Agent::A_Star_v1_Agent(Discrete_image Ambient)
 		path.erase(path.begin());
 		current = current_visit.curr;
 		prev_cost = current_visit.total_cost;
-#if BFS_debug
+#if A_star_v1_debug
 		std::cout << (int)current.x << " " << (int)current.y << "\n";
 #endif
 
@@ -127,7 +172,7 @@ A_Star_v1_Agent::A_Star_v1_Agent(Discrete_image Ambient)
 		map.insert(std::make_pair(current, current_visit));
 		std::sort(path.begin(), path.end(), My_test);
 	}
-#if BFS_debug
+#if A_star_v1_debug
 	std::cout << "\n\n";
 	std::cout << (int)current.x << " " << (int)current.y << "\n";
 	std::cout << (int)current_visit.last.x << " " << (int)current_visit.last.y << "\n";
@@ -139,7 +184,7 @@ A_Star_v1_Agent::A_Star_v1_Agent(Discrete_image Ambient)
 	auto search = map.find(current_visit.last);
 	while (search->second.curr != search->second.last && search != map.end())
 	{
-#if BFS_debug
+#if A_star_v1_debug
 		std::cout << (int)search->first.x << " " << (int)search->first.y << " ";
 		std::cout << (int)search->second.last.x << " " << (int)search->second.last.y << " ";
 		std::cout << (int)search->second.curr.x << " " << (int)search->second.curr.y << "\n";
