@@ -34,12 +34,14 @@ bool One_goal_test(const node_visit& a, const node_visit& b)
 	SNA[0] = a.curr.x - a.last.x;
 	SNA[1] = a.curr.y - a.last.y;
 	normalize(SNA);
-	alpha = std::abs(dot_prod(SNA, SGA));
+	alpha = dot_prod(SNA, SGA);
+	alpha = alpha < 0 ? 2 : alpha;
 
 	SNB[0] = b.curr.x - b.last.x;
 	SNB[1] = b.curr.y - b.last.y;
 	normalize(SNB);
-	theta = std::abs(dot_prod(SNB, SGA));
+	theta = dot_prod(SNB, SGA);
+	theta = theta < 0 ? 2 : theta;
 
 	return alpha < theta;
 }
@@ -53,14 +55,18 @@ bool Two_goal_test(const node_visit& a, const node_visit& b)
 	SNA[0] = a.curr.x - a.last.x;
 	SNA[1] = a.curr.y - a.last.y;
 	normalize(SNA);
-	alpha = std::abs(dot_prod(SNA, SGA));
-	beta = std::abs(dot_prod(SNA, SGB));
+	alpha = dot_prod(SNA, SGA);
+	alpha = alpha < 0 ? 2 : alpha;
+	beta = dot_prod(SNA, SGB);
+	beta = beta < 0 ? 2 : beta;
 
 	SNB[0] = b.curr.x - b.last.x;
 	SNB[1] = b.curr.y - b.last.y;
 	normalize(SNB);
-	theta = std::abs(dot_prod(SNB, SGA));
-	gamma = std::abs(dot_prod(SNB, SGB));
+	theta = dot_prod(SNB, SGA);
+	theta = theta < 0 ? 2 : theta;
+	gamma = dot_prod(SNB, SGB);
+	gamma = gamma < 0 ? 2 : gamma;
 
 	return (alpha < theta && alpha < gamma) || (beta < theta && beta < gamma);
 }
