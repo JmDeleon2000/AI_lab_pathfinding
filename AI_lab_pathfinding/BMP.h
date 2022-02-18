@@ -36,7 +36,7 @@ struct Discrete_image
 #define VISITED_DOWN	0b0100
 #define VISITED_UP		0b1000
 
-#define DISCRETE_BOUND 64
+#define DISCRETE_BOUND 128
 
 
 //class that opens and holds bmp image information

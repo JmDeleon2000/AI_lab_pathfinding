@@ -32,7 +32,7 @@ BMP_image::BMP_image(const char* filename)
 	text.read((char*)&width, 4);
 	text.read((char*)&height, 4);
 	text.seekg(headerSize);
-	image = new BGR_pixel* [height];
+	image = new BGR_pixel * [height];
 
 	int i, j = 0;
 	while (j < height)
@@ -92,12 +92,12 @@ void BMP_image::output_BMP(BMP_image* img, const char* filename)
 }
 
 // recreates a BMP image based on data from a previously discretized image. (data will be lost by design)
-BMP_image::BMP_image(Discrete_image* discrete_image) 
+BMP_image::BMP_image(Discrete_image* discrete_image)
 {
 	width = discrete_image->width * discrete_image->discrete_pixel_size;
 	height = discrete_image->height * discrete_image->discrete_pixel_size;
 
-	image = new BGR_pixel* [height];
+	image = new BGR_pixel * [height];
 	char discrete_pixel;
 	int i, j = 0;
 	while (j < height)
@@ -110,35 +110,35 @@ BMP_image::BMP_image(Discrete_image* discrete_image)
 				j / discrete_image->discrete_pixel_size][
 					i / discrete_image->discrete_pixel_size] & 0xf0;
 
-			switch (discrete_pixel)
-			{
-			case DISCRETE_BMP_GOAL:
-				image[j][i].b = 0;
-				image[j][i].g = 255;
-				image[j][i].r = 0;
-				break;
-			case DISCRETE_BMP_START:
-				image[j][i].b = 0;
-				image[j][i].g = 0;
-				image[j][i].r = 255;
-				break;
-			case DISCRETE_BMP_WALL:
-				image[j][i].b = 0;
-				image[j][i].g = 0;
-				image[j][i].r = 0;
-				break;
-			case DISCRETE_BMP_AWNSER:
-				image[j][i].b = 255;
-				image[j][i].g = 0;
-				image[j][i].r = 255;
-				break;
-			default:
-				image[j][i].b = 255;
-				image[j][i].g = 255;
-				image[j][i].r = 255;
-				break;
-			}
-			i++;
+				switch (discrete_pixel)
+				{
+				case DISCRETE_BMP_GOAL:
+					image[j][i].b = 0;
+					image[j][i].g = 255;
+					image[j][i].r = 0;
+					break;
+				case DISCRETE_BMP_START:
+					image[j][i].b = 0;
+					image[j][i].g = 0;
+					image[j][i].r = 255;
+					break;
+				case DISCRETE_BMP_WALL:
+					image[j][i].b = 0;
+					image[j][i].g = 0;
+					image[j][i].r = 0;
+					break;
+				case DISCRETE_BMP_AWNSER:
+					image[j][i].b = 255;
+					image[j][i].g = 0;
+					image[j][i].r = 255;
+					break;
+				default:
+					image[j][i].b = 255;
+					image[j][i].g = 255;
+					image[j][i].r = 255;
+					break;
+				}
+				i++;
 		}
 		j++;
 	}
@@ -146,9 +146,9 @@ BMP_image::BMP_image(Discrete_image* discrete_image)
 
 #define average 0
 #if average
-char average_pixels(BMP_image* image, 
-	int init_pixel_x, int init_pixel_y, 
-	int end_pixel_x, int end_pixel_y) 
+char average_pixels(BMP_image* image,
+	int init_pixel_x, int init_pixel_y,
+	int end_pixel_x, int end_pixel_y)
 {
 	// TODO better name
 	//const int pixel_range = (end_pixel_x - init_pixel_x) * (end_pixel_y - init_pixel_y);
@@ -217,17 +217,17 @@ Discrete_image BMP_image::discretize(BMP_image* image_data)
 	while (j < output.height)
 	{
 		i = 0;
-		output.data[j] = new char [output.width];
+		output.data[j] = new char[output.width];
 
 		while (i < output.width)
 		{
 #if average
-				sampled_pixel = average_pixels(image_data,
+			sampled_pixel = average_pixels(image_data,
 				i * output.discrete_pixel_size,
 				j * output.discrete_pixel_size,
 				(i + 1) * output.discrete_pixel_size,
 				(j + 1) * output.discrete_pixel_size);
-				output.data[j][i] = sampled_pixel;
+			output.data[j][i] = sampled_pixel;
 #else
 			sampled_pixel = image_data->image[
 				j * output.discrete_pixel_size][
@@ -253,7 +253,7 @@ Discrete_image BMP_image::discretize(BMP_image* image_data)
 					sampled_pixel.r >= 150) // test for a red pixel
 					output.data[j][i] = DISCRETE_BMP_START;
 #endif
-			i++;
+				i++;
 		}
 		j++;
 	}
